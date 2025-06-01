@@ -1,5 +1,5 @@
 export interface Task {
-  id: string;
+  id?: string;  // Opcional (Firebase lo asignará)
   title: string;
   description?: string;
   completed: boolean;

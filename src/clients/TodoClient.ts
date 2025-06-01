@@ -1,33 +1,26 @@
 import axios from 'axios';
 import { Task } from '../models/Task';
+import { tasksService } from '../services/tasks.service';
 
 export class TodoClient {
-  private baseUrl: string;
+  private client = axios.create({
+    baseURL: process.env.EXTERNAL_API_URL || 'https://jsonplaceholder.typicode.com',
+    timeout: 5000
+  });
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
-  }
-
-  async getAll(): Promise<Task[]> {
-    const response = await axios.get(this.baseUrl);
-    return response.data.slice(0, 10).map((item: any) => ({
-      id: item.id.toString(),
-      title: item.title,
-      completed: item.completed,
-    }));
-  }
-
-  async createTask(task: Task): Promise<Task> {
-    const response = await axios.post(this.baseUrl, task);
-    return { ...task, id: response.data.id.toString() };
-  }
-
-  async updateTask(task: Task): Promise<void> {
-    await axios.put(`${this.baseUrl}/${task.id}`, task);
-  }
-
-  async deleteTask(id: string): Promise<void> {
-    await axios.delete(`${this.baseUrl}/${id}`);
+  async getAllTasks(): Promise<Task[]> {
+    const response = await this.client.get('/todos');
+    return Promise.all(
+      response.data.map(async (item: any) => {
+        // Guardar en Firestore (generará ID automático)
+        const task = await tasksService.createTask({
+          title: item.title,
+          completed: item.completed,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        return task;
+      })
+    );
   }
 }
-

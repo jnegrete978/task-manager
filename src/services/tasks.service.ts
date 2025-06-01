@@ -1,43 +1,22 @@
-import { Task } from '../models/Task';
-import { TodoClient } from '../clients/TodoClient';
 import { FirebaseTaskRepository } from '../repositories/firebaseTask.repository';
+import { Task } from '../models/Task';
 
-const client = new TodoClient('https://jsonplaceholder.typicode.com/todos');
 const firebaseRepo = new FirebaseTaskRepository();
 
-export class TaskService {
+export const tasksService = {
+  async createTask(taskData: Omit<Task, 'id'>): Promise<Task> {
+    return await firebaseRepo.createTask(taskData);
+  },
+
   async getAllTasks(): Promise<Task[]> {
-    const [external, internal] = await Promise.all([
-      client.getAll(),
-      firebaseRepo.getAll()
-    ]);
+    return await firebaseRepo.getAllTasks();
+  },
 
-    const merged = [...external];
-    internal.forEach((task: Task) => {
-      if (!merged.some(t => t.id === task.id)) {
-        merged.push(task);
-      }
-    });
-
-    return merged;
-  }
-
-  async createTask(task: Task): Promise<Task> {
-    const newTask = await client.createTask(task);
-    await firebaseRepo.save(newTask);
-    return newTask;
-  }
-
-  async updateTask(id: string, task: Task): Promise<Task> {
-    const updatedTask = { ...task, id };
-    await client.updateTask(updatedTask);
-    await firebaseRepo.save(updatedTask);
-    return updatedTask;
-  }
+  async updateTask(id: string, taskData: Partial<Task>): Promise<void> {
+    await firebaseRepo.updateTask(id, taskData);
+  },
 
   async deleteTask(id: string): Promise<void> {
-    await client.deleteTask(id);
-    await firebaseRepo.delete(id);
+    await firebaseRepo.deleteTask(id);
   }
-}
-
+};

@@ -1,41 +1,50 @@
+import * as admin from 'firebase-admin';
 import { Task } from '../models/Task';
-import admin from 'firebase-admin';
-import fs from 'fs';
-import path from 'path';
-
-let dbInstance: FirebaseFirestore.Firestore;
-
-function initFirebase() {
-  if (!admin.apps.length) {
-    const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.resolve('serviceAccountKey.json');
-    const serviceAccount = JSON.parse(fs.readFileSync(keyPath, 'utf-8'));
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-    dbInstance = admin.firestore();
-  }
-}
-
-function getDb(): FirebaseFirestore.Firestore {
-  if (!dbInstance) {
-    initFirebase();
-  }
-  return dbInstance!;
-}
 
 export class FirebaseTaskRepository {
-  private db = getDb();
+  public db: admin.firestore.Firestore;
 
-  async getAll(): Promise<Task[]> {
+  constructor() {
+    if (!admin.apps.length) {
+      const serviceAccount = require('../../serviceAccountKey.json');
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: serviceAccount.project_id,
+          clientEmail: serviceAccount.client_email,
+          privateKey: serviceAccount.private_key.replace(/\\n/g, '\n')
+        })
+      });
+    }
+    this.db = admin.firestore();
+  }
+
+  async createTask(taskData: Omit<Task, 'id'>): Promise<Task> {
+    const taskRef = this.db.collection('tasks').doc(); // Firestore genera ID
+    
+    const task: Task = {
+      ...taskData,
+      id: taskRef.id, // Usamos el ID generado
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await taskRef.set(task);
+    return task;
+  }
+
+  async getAllTasks(): Promise<Task[]> {
     const snapshot = await this.db.collection('tasks').get();
     return snapshot.docs.map(doc => doc.data() as Task);
   }
 
-  async save(task: Task): Promise<void> {
-    await this.db.collection('tasks').doc(task.id).set(task);
+  async updateTask(id: string, taskData: Partial<Task>): Promise<void> {
+    await this.db.collection('tasks').doc(id).update({
+      ...taskData,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteTask(id: string): Promise<void> {
     await this.db.collection('tasks').doc(id).delete();
   }
 }

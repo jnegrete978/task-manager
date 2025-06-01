@@ -1,28 +1,43 @@
 import { Router } from 'express';
-import { TaskService } from '../services/tasks.service';
-import { Task } from '../models/Task';
+import { tasksService } from '../services/tasks.service';
 
-export const taskRouter = Router();
-const tasksService = new TaskService();
+const router = Router();
 
-taskRouter.get('/', async (_req, res) => {
-  const tasks = await tasksService.getAllTasks();
-  res.json(tasks);
+router.get('/', async (_, res) => {
+  try {
+    const tasks = await tasksService.getAllTasks();
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching tasks' });
+  }
 });
 
-taskRouter.post('/', async (req, res) => {
-  const task: Task = req.body;
-  const newTask = await tasksService.createTask(task);
-  res.status(201).json(newTask);
+router.post('/', async (req, res) => {
+  try {
+    const { id, ...taskData } = req.body; // Eliminar ID si existe
+    const task = await tasksService.createTask(taskData);
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(400).json({ error: 'Bad request' });
+  }
 });
 
-taskRouter.put('/:id', async (req, res) => {
-  const updated = await tasksService.updateTask(req.params.id, req.body);
-  res.json(updated);
+router.put('/:id', async (req, res) => {
+  try {
+    await tasksService.updateTask(req.params.id, req.body);
+    res.status(204).send();
+  } catch (error) {
+    res.status(404).json({ error: 'Task not found' });
+  }
 });
 
-taskRouter.delete('/:id', async (req, res) => {
-  await tasksService.deleteTask(req.params.id);
-  res.status(204).send();
+router.delete('/:id', async (req, res) => {
+  try {
+    await tasksService.deleteTask(req.params.id);
+    res.status(204).send();
+  } catch (error) {
+    res.status(404).json({ error: 'Task not found' });
+  }
 });
 
+export const taskRouter = router;
