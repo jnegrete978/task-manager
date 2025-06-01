@@ -23,7 +23,7 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -40,7 +40,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.json",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "serviceAccountKey.json"
   ],
   "exclude": [
     "node_modules",
@@ -49,13 +50,12 @@
     "dist"
   ],
   "ts-node": {
-    "require": [
-      "tsconfig-paths/register"
-    ],
-    "transpileOnly": true,
-    "files": true,
     "compilerOptions": {
-      "module": "commonjs"
-    }
+      "module": "commonjs",
+      "resolveJsonModule": true,
+      "esModuleInterop": true
+    },
+    "files": true,
+    "transpileOnly": true
   }
 }

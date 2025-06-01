@@ -1,42 +1,28 @@
 import { Router } from 'express';
-import { tasksService } from '../services/tasks.service';
+import { TaskService } from '../services/tasks.service';
+import { Task } from '../models/Task';
 
-const router = Router();
+export const taskRouter = Router();
+const tasksService = new TaskService();
 
-router.get('/', async (_, res) => {
-  try {
-    const tasks = await tasksService.getAllTasks();
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+taskRouter.get('/', async (_req, res) => {
+  const tasks = await tasksService.getAllTasks();
+  res.json(tasks);
 });
 
-router.post('/', async (req, res) => {
-  try {
-    const task = await tasksService.createTask(req.body);
-    res.status(201).json(task);
-  } catch (error) {
-    res.status(400).json({ error: 'Bad request' });
-  }
+taskRouter.post('/', async (req, res) => {
+  const task: Task = req.body;
+  const newTask = await tasksService.createTask(task);
+  res.status(201).json(newTask);
 });
 
-router.put('/:id', async (req, res) => {
-  try {
-    const task = await tasksService.updateTask(req.params.id, req.body);
-    res.json(task);
-  } catch (error) {
-    res.status(404).json({ error: 'Task not found' });
-  }
+taskRouter.put('/:id', async (req, res) => {
+  const updated = await tasksService.updateTask(req.params.id, req.body);
+  res.json(updated);
 });
 
-router.delete('/:id', async (req, res) => {
-  try {
-    await tasksService.deleteTask(req.params.id);
-    res.status(204).send();
-  } catch (error) {
-    res.status(404).json({ error: 'Task not found' });
-  }
+taskRouter.delete('/:id', async (req, res) => {
+  await tasksService.deleteTask(req.params.id);
+  res.status(204).send();
 });
 
-export const taskRouter = router;

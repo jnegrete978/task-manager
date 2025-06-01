@@ -1,42 +1,33 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { Task } from '../models/Task';
 
 export class TodoClient {
-  private client: AxiosInstance;
+  private baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.client = axios.create({
-      baseURL: baseUrl,
-      timeout: 5000,
-    });
+    this.baseUrl = baseUrl;
   }
 
-  async getAllTasks(): Promise<Task[]> {
-    const response = await this.client.get('/tasks');
-    return response.data.map(this.transformToTask);
+  async getAll(): Promise<Task[]> {
+    const response = await axios.get(this.baseUrl);
+    return response.data.slice(0, 10).map((item: any) => ({
+      id: item.id.toString(),
+      title: item.title,
+      completed: item.completed,
+    }));
   }
 
   async createTask(task: Task): Promise<Task> {
-    const response = await this.client.post('/tasks', task);
-    return this.transformToTask(response.data);
+    const response = await axios.post(this.baseUrl, task);
+    return { ...task, id: response.data.id.toString() };
   }
 
   async updateTask(task: Task): Promise<void> {
-    await this.client.put(`/tasks/${task.id}`, task);
+    await axios.put(`${this.baseUrl}/${task.id}`, task);
   }
 
   async deleteTask(id: string): Promise<void> {
-    await this.client.delete(`/tasks/${id}`);
-  }
-
-  private transformToTask(data: any): Task {
-    return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      completed: data.completed || false,
-      createdAt: new Date(data.createdAt || Date.now()),
-      updatedAt: new Date(data.updatedAt || Date.now())
-    };
+    await axios.delete(`${this.baseUrl}/${id}`);
   }
 }
+
