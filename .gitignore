@@ -1,0 +1,25 @@
+serviceAccountKey.json
+
+# Carpeta de dependencias
+node_modules/
+
+# Archivos de entorno
+.env
+.env.development
+.env.production
+
+# Archivos de compilación
+/dist
+/build
+
+# Archivos de logs
+*.log
+
+# Config de editores
+.vscode/
+.idea/
+*.swp
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
