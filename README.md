@@ -34,13 +34,16 @@
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/tu-repo/task-manager.git
+git clone https://github.com/jnegrete978/task-manager.git
 cd task-manager
 ```
 ## 2. Configurar entorno:
+Editar el archivo .env con tu editor de texto preferido para crearlo
 ```bash
-cp .env.example .env
-# Editar el archivo .env con tu configuración
+cat .env
+    PORT=3000
+    FIREBASE_PROJECT_ID=parcial-taskManager
+    GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ``` 
 
 ## 3. Iniciar la aplicación:
@@ -155,6 +158,10 @@ Actualizar Tarea
 curl -X PUT http://localhost:3000/api/tasks/ABC123def456 \
   -H "Content-Type: application/json" \
   -d '{"completed":true}'
+```
+Borrar tareas
+```bash
+curl -X DELETE http://localhost:3000/api/tasks/TASK12345678
 ```
 Configuración
 
