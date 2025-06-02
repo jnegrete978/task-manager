@@ -5,6 +5,7 @@
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
 ## Tabla de Contenidos
+- [Descripcion](#Descripcion)
 - [Características](#características)
 - [Requisitos Previos](#requisitos-previos)
 - [Inicio Rápido](#inicio-rápido)
@@ -16,6 +17,9 @@
 - [Configuración](#configuración)
 - [Desarrollo](#desarrollo)
 - [Solución de Problemas](#solución-de-problemas)
+
+## Descripcion
+Se desarrollo una aplicacion la "Gestion de tareas", utilizando diferentes recursos y tecnologias disponibles. 
 
 ## Características
 - Operaciones CRUD completas para tareas
