@@ -37,17 +37,16 @@ Se desarrollo una aplicacion la "Gestion de tareas", utilizando diferentes recur
 ## Inicio Rápido
 
 1. Clonar el repositorio:
-```bash
+```
 git clone https://github.com/jnegrete978/task-manager.git
 cd task-manager
 ```
 ## 2. Configurar entorno:
 Editar el archivo .env con tu editor de texto preferido para crearlo
-```bash
-cat .env
-    PORT=3000
-    FIREBASE_PROJECT_ID=parcial-taskManager
-    GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
+```
+PORT=3000
+FIREBASE_PROJECT_ID=parcial-taskManager
+GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ``` 
 
 ## 3. Iniciar la aplicación:
@@ -63,8 +62,7 @@ GET /api/tasks
 ```
 
 Respuesta:
-```
-json
+```json
 [
   {
     "id": "ABC123def456",
@@ -83,8 +81,7 @@ POST /api/tasks
 ```
 
 Cuerpo de la Solicitud:
-```
-json
+```json
 {
   "title": "Nueva tarea",
   "description": "Descripción de la tarea",
@@ -92,8 +89,7 @@ json
 }
 ```
 #### Respuesta (201 Creado):
-```
-json
+```json
 {
   "id": "XYZ789uvw123",
   "title": "Nueva tarea",
@@ -102,7 +98,7 @@ json
   "createdAt": "2023-10-05T14:00:00.000Z",
   "updatedAt": "2023-10-05T14:00:00.000Z"
 }
-
+```
 ### Actualizar Tarea
 ```
 PUT /api/tasks/{id}
@@ -126,7 +122,6 @@ DELETE /api/tasks/{id}
 Respuesta:
 204 Sin Contenido
 
-```
 Gestión con Docker
 Construir e Iniciar
 ```
@@ -138,10 +133,12 @@ Ver Logs
 ```
 docker-compose logs -f app
 ```
+
 Detener Servicios
 ```
 docker-compose down
 ```
+
 Limpieza Completa
 ```bash
 docker-compose down -v
@@ -195,14 +192,15 @@ Contenido del **.env**
 ```
 PORT=3000
 FIREBASE_PROJECT_ID=task-manager
-GOOGLE_APPLICATION_CREDENTIALS=/app/serviceAccountKey.json
-EXTERNAL_API_URL=https://api.ejemplo.com
+GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ```
 ## Desarrollo
 1. Instalar dependencias:
+
 ```
 npm install
 ```
+
 2. Ejecutar en modo desarrollo:
 
 ```bash
